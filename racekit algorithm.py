@@ -133,9 +133,7 @@ def round_robin_import():
     except:
         print "Dude you're blowing it. Get your shit together or give the computer to Luke!"
     index = 0
-    for i in csv:
-        csv[index]=i.split("\r\n")[0]
-        index +=1
+    csv = csv[0].split('\r')
     csv=csv[1:]
     index = 0
     for i in csv:
@@ -143,12 +141,6 @@ def round_robin_import():
         index+=1
     for i in csv:
         new_rider_library[int(i[0])].append(int(i[-1]))
-    for i in new_rider_library:
-        if new_rider_library[i][1] == 'Y':
-            if junior_heats.has_key(new_rider_library[i][-1]):
-                junior_heats[new_rider_library[i][-1]] += [i]
-            else:
-                junior_heats[new_rider_library[i][-1]] = [i]
     for i in new_rider_library:
         if open_heats.has_key(new_rider_library[i][-1]):
             open_heats[new_rider_library[i][-1]] += [i] 
@@ -174,34 +166,10 @@ def round_robin_import():
         index+=1
     f1.writelines(wlist)
     f1.close
-    jl = []
-    for i in junior_heats:
-        rlist_final = []
-        rlist = junior_heats[i]
-        while len(rlist)>1:
-            pick=random.randint(0,len(rlist)-1)
-            rlist_final.append(rlist[pick])
-            rlist.pop(pick)
-        rlist_final.append(rlist[0])
-        jl = rlist_final + jl
-    f2=file('juniors qualifying results.csv', 'w')
-    f2.writelines(['Qualifying Position,','Rider #,','Name\r'])
-    wlist = range(1,len(jl)+1)
-    index = 0
-    for i in wlist:
-        wlist[index] = str(index+1) + ',' + '(' + str(jl[index]) + ')' + ',' \
-             + rider_library[str(jl[index])] + ',\r'
-        index+=1
-    f2.writelines(wlist)
-    f2.close
     power = 1
     while not(2**power >= len(ol)):
         power += 1
     bracket_export(ol,power,'open')
-    power = 1
-    while not(2**power >= len(jl)):
-        power += 1
-    bracket_export(jl,power,'jr')
     
 
 ######################################################################
@@ -324,14 +292,18 @@ def signup_import():
         f.close
     except:
         print "Dude you're blowing it. Get your shit together or give the computer to Luke!"
+    print csv
     for i in csv:
         csv=i.split("\r")
+    print csv
     index = 0
     while index < len(csv):
         csv[index] = (csv[index]).split(',')
         index+=1
+    print csv
     for i in csv[1:]:
         rider_library[i[1]] = i[0]
+    print rider_library
     if len(rider_library)%2 != 0:
         rider_library[str(len(rider_library))] = 'Patrick Switzer'
     heat_gen(len(rider_library))
